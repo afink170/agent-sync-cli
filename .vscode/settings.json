@@ -1,0 +1,8 @@
+{
+  "json.schemas": [
+    {
+      "fileMatch": ["**/.agentsyncrc*"],
+      "url": "./schemas/agent-sync-config.json"
+    }
+  ]
+}

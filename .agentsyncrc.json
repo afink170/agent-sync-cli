@@ -1,0 +1,31 @@
+{
+  "rules": [
+    {
+      "name": "agents-md",
+      "description": "Create CLAUDE.local.md links pointing to AGENTS.md files in all directories",
+      "source": "AGENTS.md",
+      "target": "CLAUDE.local.md",
+      "recursive": true,
+      "type": "file",
+      "enabled": true
+    },
+    {
+      "name": "agents-rules",
+      "description": "Sync .agents/rules directory to .claude/rules",
+      "source": ".agents/rules",
+      "target": [".claude/rules"],
+      "recursive": false,
+      "type": "directory",
+      "enabled": true
+    },
+    {
+      "name": "agents-skills",
+      "description": "Sync .agents/skills directory to .claude/skills",
+      "source": ".agents/skills",
+      "target": [".claude/skills", ".kilocode/skills"],
+      "recursive": false,
+      "type": "directory",
+      "enabled": true
+    }
+  ]
+}

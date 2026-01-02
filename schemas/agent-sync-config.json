@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "rules": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/sync-rule"
+      }
+    }
+  },
+  "required": ["rules"],
+  "additionalProperties": false,
+  "$id": "https://raw.githubusercontent.com/afink170/agent-sync-cli/refs/heads/main/schemas/agent-sync-config.json",
+  "$defs": {
+    "sync-rule": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "A unique name identifying the synchronization rule."
+        },
+        "description": {
+          "description": "An optional human-readable description of the rule's purpose.",
+          "type": "string"
+        },
+        "source": {
+          "type": "string",
+          "description": "The path to the source file or directory to be synchronized."
+        },
+        "target": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "minItems": 1,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          ],
+          "description": "The path to the target location where the source should be synced."
+        },
+        "recursive": {
+          "type": "boolean",
+          "description": "Whether to apply the synchronization recursively to subdirectories."
+        },
+        "type": {
+          "type": "string",
+          "enum": ["file", "directory"],
+          "description": "The type of item to synchronize: either a single file or an entire directory."
+        },
+        "enabled": {
+          "type": "boolean",
+          "description": "Whether this rule is enabled and should be processed during synchronization."
+        }
+      },
+      "required": ["name", "source", "target", "recursive", "type", "enabled"],
+      "additionalProperties": false,
+      "id": "sync-rule",
+      "description": "Rule defining how a file or directory should be synced."
+    }
+  }
+}
