@@ -22,7 +22,7 @@
     "build": "tsup",
     "prepack": "tsup",
     "dev": "tsup --watch",
-    "test": "vitest",
+    "test": "vitest --run",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
     "format": "prettier --write .",
