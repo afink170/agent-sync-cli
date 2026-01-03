@@ -13,7 +13,7 @@
       "name": "agents-rules",
       "description": "Sync .agents/rules directory to .claude/rules",
       "source": ".agents/rules",
-      "target": [".claude/rules"],
+      "target": [".claude/rules", ".kilocode/rules"],
       "recursive": false,
       "type": "directory",
       "enabled": true

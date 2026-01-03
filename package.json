@@ -3,7 +3,10 @@
   "version": "0.1.0",
   "type": "module",
   "description": "CLI tools to manage synchronization of AI coding agent files, such as reusable prompts and skills.",
-  "author": "afink170",
+  "repository": "github:afink170/agent-sync-cli",
+  "homepage": "https://github.com/afink170/agent-sync-cli",
+  "bugs": "https://github.com/afink170/agent-sync-cli/issues",
+  "author": "Andrew Fink",
   "license": "MIT",
   "keywords": [
     "cli",
@@ -11,31 +14,40 @@
     "agent",
     "sync"
   ],
+  "engines": {
+    "node": ">=20.17"
+  },
   "main": "dist/index.js",
   "bin": {
     "agent-sync": "dist/index.js"
   },
   "scripts": {
-    "generate-schema": "./scripts/generate-schema.ts && prettier --write schemas/",
+    "commitlint": "commitlint --edit",
+    "generate-schema": "tsx scripts/generate-schema.ts && prettier --write schemas/",
     "prebuild": "pnpm generate-schema",
     "build": "tsup",
     "prepack": "tsup",
     "dev": "tsup --watch",
-    "test": "vitest",
+    "test": "vitest --run",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit",
-    "prepare": "husky"
+    "prepare": "husky",
+    "changeset:commit": "git add ./.changeset/*.md && git commit -m 'chore(changeset): add changeset'"
   },
   "dependencies": {
     "@node-cli/logger": "^1.3.2",
     "@trpc/server": "^10.45.0",
     "cosmiconfig": "^9.0.0",
+    "globby": "^16.1.0",
     "trpc-cli": "^0.12.1",
     "zod": "^4.3.4"
   },
   "devDependencies": {
+    "@changesets/cli": "^2.29.8",
+    "@commitlint/cli": "^20.3.0",
+    "@commitlint/config-conventional": "^20.3.0",
     "@eslint/js": "^9.39.2",
     "@types/node": "^20.0.0",
     "eslint": "^9.0.0",

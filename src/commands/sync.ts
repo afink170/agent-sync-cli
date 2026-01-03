@@ -24,7 +24,7 @@ export async function syncCommand(options: {
     logger.info(`Processing rule: ${rule.name}`);
     const targets = Array.isArray(rule.target) ? rule.target : [rule.target];
     if (rule.recursive && rule.type === 'file') {
-      const dirs = findDirectoriesWithFile(process.cwd(), rule.source);
+      const dirs = await findDirectoriesWithFile(process.cwd(), rule.source);
       for (const dir of dirs) {
         for (const target of targets) {
           syncSymlink(dir, rule.source, target, rule.type);

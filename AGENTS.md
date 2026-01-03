@@ -2,31 +2,13 @@
 
 This file provides guidance to AI agents when working with code in this repository.
 
+For build tools, development workflow, and commit guidelines, see [@DEVELOPMENT.md](DEVELOPMENT.md).
+
 ## Project Overview
 
 Agent Sync CLI is a tool that manages synchronization of AI coding agent files (like `AGENTS.md`, `CLAUDE.md`, and skills directories) between different AI tools using configurable symlink rules.
 
-## Development Commands
-
-### Build and Development
-
-```bash
-pnpm build           # Build the project (runs prebuild hook to generate schema)
-pnpm dev             # Watch mode for development
-pnpm generate-schema # Generate JSON schema from Zod types
-```
-
-### Testing and Quality
-
-```bash
-pnpm test            # Run tests with Vitest
-pnpm typecheck       # Type check without emitting files
-pnpm lint            # Lint code with ESLint
-pnpm lint:fix        # Lint and auto-fix issues
-pnpm format          # Format code with Prettier
-```
-
-### Running the CLI Locally
+## Running the CLI Locally
 
 ```bash
 # During development, test the CLI with:
@@ -82,19 +64,7 @@ The path alias `@/*` maps to `./src/*` (configured in `tsconfig.json`). When add
 
 ## Build Process
 
-The build uses **tsup** with ESM output format. Before building:
-
-1. `prebuild` hook runs `generate-schema` script
-2. This regenerates `schemas/agent-sync-config.json` from Zod types
-3. Main build bundles `src/index.ts` to `dist/index.js`
-
-## Git Hooks
-
-Pre-commit hook runs **lint-staged** which:
-
-1. Type checks all TS/JS files
-2. Runs ESLint with auto-fix
-3. Formats code with Prettier (with organize-imports plugin)
+The build uses **tsup** with ESM output format. The `prebuild` hook automatically generates the JSON schema from Zod types before building. See [@DEVELOPMENT.md](DEVELOPMENT.md) for details on the build process and git hooks.
 
 ## Testing Notes
 

@@ -1,0 +1,35 @@
+name: Security Analysis
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  schedule:
+    - cron: '0 0 * * 1' # 00:00 on Monday.
+
+permissions:
+  contents: read
+  security-events: write
+
+env:
+  HUSKY: '0'
+
+jobs:
+  CodeQL:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        language:
+          - javascript-typescript
+          - actions
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/install
+      - uses: github/codeql-action/init@v3
+        with:
+          languages: ${{matrix.language}}
+
+      - uses: github/codeql-action/analyze@v3

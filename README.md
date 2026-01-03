@@ -97,27 +97,6 @@ Example config:
 }
 ```
 
-## Development
+## Development and Contributing
 
-### Local Development
-
-```bash
-git clone https://github.com/afink170/agent-sync-cli.git
-cd agent-sync-cli
-pnpm install
-pnpm dev
-```
-
-### Testing
-
-```bash
-pnpm test
-pnpm test:e2e
-```
-
-### Publishing
-
-```bash
-pnpm build
-npm publish
-```
+For detailed information about development, build process, git hooks, commit conventions, and the development workflow, see [DEVELOPMENT.md](./DEVELOPMENT.md).

@@ -1,44 +1,36 @@
 import fs from 'fs';
+import { globby } from 'globby';
 import path from 'path';
 
 import { logger } from '@/core/logger';
 
 /**
  * Recursively searches for directories containing a specific file, starting from the base directory.
+ * Uses globby for robust, performant directory traversal with proper symlink handling.
  * @param baseDir - The root directory to start the search from.
  * @param fileName - The name of the file to search for.
- * @returns An array of directory paths that contain the specified file.
+ * @returns A promise that resolves to an array of directory paths that contain the specified file.
  */
-export function findDirectoriesWithFile(
+export async function findDirectoriesWithFile(
   baseDir: string,
   fileName: string
-): string[] {
-  const dirs: string[] = [];
+): Promise<string[]> {
+  // Find all instances of the file using globby
+  const files = await globby(`**/${fileName}`, {
+    cwd: baseDir,
+    followSymbolicLinks: false, // Don't follow symlinks to avoid cycles
+    onlyFiles: true,
+    absolute: true,
+    ignore: ['**/node_modules/**', '**/.git/**'],
+  });
 
-  function walk(dir: string) {
-    const items = fs.readdirSync(dir);
+  // Extract unique directory paths
+  const dirs = [...new Set(files.map((file) => path.dirname(file)))];
 
-    for (const item of items) {
-      const fullPath = path.join(dir, item);
-
-      const stat = fs.statSync(fullPath);
-
-      if (stat.isDirectory()) {
-        if (fs.existsSync(path.join(fullPath, fileName))) {
-          logger.debug('Found matching file:', path.join(fullPath, fileName));
-          dirs.push(fullPath);
-        }
-
-        walk(fullPath);
-      }
-    }
+  // Log found files for debugging
+  for (const file of files) {
+    logger.debug('Found matching file:', file);
   }
-
-  if (fs.existsSync(path.join(baseDir, fileName))) {
-    dirs.push(baseDir);
-  }
-
-  walk(baseDir);
 
   return dirs;
 }

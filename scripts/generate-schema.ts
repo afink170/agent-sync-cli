@@ -1,5 +1,3 @@
-#! /usr/bin/env npx tsx
-
 import { Config } from '@/types/config';
 import fs from 'fs';
 import path from 'path';
