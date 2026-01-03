@@ -3,7 +3,10 @@
   "version": "0.1.0",
   "type": "module",
   "description": "CLI tools to manage synchronization of AI coding agent files, such as reusable prompts and skills.",
-  "author": "afink170",
+  "repository": "github:afink170/agent-sync-cli",
+  "homepage": "https://github.com/afink170/agent-sync-cli",
+  "bugs": "https://github.com/afink170/agent-sync-cli/issues",
+  "author": "Andrew Fink",
   "license": "MIT",
   "keywords": [
     "cli",
@@ -11,6 +14,9 @@
     "agent",
     "sync"
   ],
+  "engines": {
+    "node": ">=20.17"
+  },
   "main": "dist/index.js",
   "bin": {
     "agent-sync": "dist/index.js"
@@ -33,6 +39,7 @@
     "@node-cli/logger": "^1.3.2",
     "@trpc/server": "^10.45.0",
     "cosmiconfig": "^9.0.0",
+    "globby": "^16.1.0",
     "trpc-cli": "^0.12.1",
     "zod": "^4.3.4"
   },
