@@ -23,7 +23,7 @@
   },
   "scripts": {
     "commitlint": "commitlint --edit",
-    "generate-schema": "./scripts/generate-schema.ts && prettier --write schemas/",
+    "generate-schema": "tsx scripts/generate-schema.ts && prettier --write schemas/",
     "prebuild": "pnpm generate-schema",
     "build": "tsup",
     "prepack": "tsup",
