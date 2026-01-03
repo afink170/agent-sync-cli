@@ -16,6 +16,7 @@
     "agent-sync": "dist/index.js"
   },
   "scripts": {
+    "commitlint": "commitlint --edit",
     "generate-schema": "./scripts/generate-schema.ts && prettier --write schemas/",
     "prebuild": "pnpm generate-schema",
     "build": "tsup",
@@ -37,6 +38,8 @@
   },
   "devDependencies": {
     "@changesets/cli": "^2.29.8",
+    "@commitlint/cli": "^20.3.0",
+    "@commitlint/config-conventional": "^20.3.0",
     "@eslint/js": "^9.39.2",
     "@types/node": "^20.0.0",
     "eslint": "^9.0.0",
