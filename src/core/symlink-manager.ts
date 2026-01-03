@@ -31,16 +31,23 @@ export function syncSymlink(
     return;
   }
 
-  // Check if target exists
+  // Check if target exists (use lstatSync to detect symlinks without following them)
 
-  if (fs.existsSync(targetPath)) {
-    const stat = fs.lstatSync(targetPath);
+  let targetExists = false;
+  let stat: fs.Stats | undefined;
+  try {
+    stat = fs.lstatSync(targetPath);
+    targetExists = true;
+  } catch {
+    // Target doesn't exist, which is fine
+  }
 
+  if (targetExists && stat) {
     if (stat.isSymbolicLink()) {
       const currentLink = fs.readlinkSync(targetPath);
 
       if (currentLink === source) {
-        logger.log(`Symlink ${targetPath} already correct`);
+        logger.debug(`Symlink ${targetPath} already correct`);
 
         return;
       } else {
@@ -64,6 +71,11 @@ export function syncSymlink(
   logger.action(`Creating symlink ${targetPath} -> ${source}`);
 
   if (!logger.dryRun) {
+    // Ensure parent directory exists
+    const parentDir = path.dirname(targetPath);
+    if (!fs.existsSync(parentDir)) {
+      fs.mkdirSync(parentDir, { recursive: true });
+    }
     fs.symlinkSync(source, targetPath, linkType);
   }
 }
