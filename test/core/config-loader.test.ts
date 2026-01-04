@@ -1,5 +1,5 @@
+import { loadConfig } from '@/core/config-loader';
 import { describe, expect, it } from 'vitest';
-import { loadConfig } from './config-loader';
 
 describe('config-loader', () => {
   it.skip('should load default config', async () => {

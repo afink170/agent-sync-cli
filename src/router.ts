@@ -11,28 +11,29 @@ const router = t.router({
       description: 'Sync all enabled rules',
     })
     .input(
-      z.object({
-        rule: z.string().optional().describe('Sync specific rule'),
-        config: z.string().optional().describe('Path to config file'),
-        dryRun: z.boolean().optional().describe('Dry run mode'),
-        verbose: z.boolean().optional().describe('Verbose output'),
-      })
+      z
+        .object({
+          rule: z.string().describe('Sync specific rule'),
+          config: z.string().describe('Path to config file'),
+          dryRun: z.boolean().describe('Dry run mode'),
+          verbose: z.boolean().describe('Verbose output'),
+        })
+        .partial()
     )
-    .mutation(async ({ input }) => {
-      await syncCommand(input);
-    }),
+    .mutation(({ input }) => syncCommand(input)),
+
   validate: t.procedure
     .meta({
       description: 'Validate config',
     })
     .input(
-      z.object({
-        config: z.string().optional().describe('Path to config file'),
-      })
+      z
+        .object({
+          config: z.string().describe('Path to config file'),
+        })
+        .partial()
     )
-    .mutation(async ({ input }) => {
-      await validateCommand(input);
-    }),
+    .mutation(({ input }) => validateCommand(input)),
 });
 
 export { router };
