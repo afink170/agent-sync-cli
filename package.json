@@ -1,6 +1,6 @@
 {
   "name": "agent-sync-cli",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "description": "CLI tools to manage synchronization of AI coding agent files, such as reusable prompts and skills.",
   "repository": "github:afink170/agent-sync-cli",
