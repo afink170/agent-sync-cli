@@ -72,3 +72,7 @@ When writing tests:
 
 - Use Vitest (configured in package.json)
 - Tests run with ES modules (project is `"type": "module"`)
+
+## Agent Reports
+
+When writing ad-hoc report files as part of task execution, reports should be written to the `.agents/reports/` folder, which is not stored in version control.

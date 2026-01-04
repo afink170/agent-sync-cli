@@ -1,0 +1,8 @@
+# By default, ignore all files in this folder
+*
+
+# Specifically un-ingore a few files we want to store in git
+!.gitignore
+!rules/
+!skills/
+!README.md

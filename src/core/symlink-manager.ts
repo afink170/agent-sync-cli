@@ -42,11 +42,15 @@ export function syncSymlink(
     // Target doesn't exist, which is fine
   }
 
+  // Calculate relative path from symlink location to source
+  const targetDir = path.dirname(targetPath);
+  const relativeSource = path.relative(targetDir, sourcePath);
+
   if (targetExists && stat) {
     if (stat.isSymbolicLink()) {
       const currentLink = fs.readlinkSync(targetPath);
 
-      if (currentLink === source) {
+      if (currentLink === relativeSource) {
         logger.debug(`Symlink ${targetPath} already correct`);
 
         return;
@@ -68,7 +72,7 @@ export function syncSymlink(
 
   // Create symlink
 
-  logger.action(`Creating symlink ${targetPath} -> ${source}`);
+  logger.action(`Creating symlink ${targetPath} -> ${relativeSource}`);
 
   if (!logger.dryRun) {
     // Ensure parent directory exists
@@ -76,6 +80,6 @@ export function syncSymlink(
     if (!fs.existsSync(parentDir)) {
       fs.mkdirSync(parentDir, { recursive: true });
     }
-    fs.symlinkSync(source, targetPath, linkType);
+    fs.symlinkSync(relativeSource, targetPath, linkType);
   }
 }
