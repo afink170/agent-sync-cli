@@ -21,12 +21,18 @@
   "bin": {
     "agent-sync": "dist/index.js"
   },
+  "files": [
+    "dist",
+    "schemas",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "commitlint": "commitlint --edit",
     "generate-schema": "tsx scripts/generate-schema.ts && prettier --write schemas/",
     "prebuild": "pnpm generate-schema",
     "build": "tsup",
-    "prepack": "tsup",
+    "prepack": "pnpm build",
     "dev": "tsup --watch",
     "test": "vitest --run",
     "lint": "eslint",
@@ -34,6 +40,8 @@
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit",
     "prepare": "husky",
+    "changeset:add": "changeset add",
+    "changeset:add:empty": "changeset add --empty",
     "changeset:commit": "git add ./.changeset/*.md && git commit -m 'chore(changeset): add changeset'"
   },
   "dependencies": {
