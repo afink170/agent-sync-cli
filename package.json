@@ -44,8 +44,8 @@
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit",
     "prepare": "husky",
-    "changeset:add": "changeset add",
-    "changeset:add:empty": "changeset add --empty",
+    "changeset:add": "changeset add && pnpm changeset:commit",
+    "changeset:add:empty": "changeset add --empty && pnpm changeset:commit",
     "changeset:commit": "git add ./.changeset/*.md && git commit -m 'chore(changeset): add changeset'"
   },
   "dependencies": {
