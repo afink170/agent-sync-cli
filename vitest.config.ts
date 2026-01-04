@@ -20,7 +20,6 @@ export default defineConfig({
       },
     ],
     globals: true,
-    setupFiles: ['test/vitest.setup.ts'],
     silent: 'passed-only',
     watch: false,
     environment: 'node',
