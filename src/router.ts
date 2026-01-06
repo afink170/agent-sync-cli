@@ -26,7 +26,7 @@ const router = t.router({
       description: 'Sync all enabled rules',
     })
     .input(
-      z.object({
+      BaseCommandInput.extend({
         rule: z.string().optional().describe('Sync specific rule'),
       })
     )

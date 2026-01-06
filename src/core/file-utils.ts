@@ -36,9 +36,8 @@ export async function findDirectoriesWithFile(
 }
 
 /**
- * Checks if the given path exists and is a directory.
+ * Checks if the given absolute path exists and is a directory.
  * @param dirPath - The path to check.
- * @param
  * @returns True if the path exists and is a directory, false otherwise.
  */
 export function directoryExists(dirPath: string): boolean {
