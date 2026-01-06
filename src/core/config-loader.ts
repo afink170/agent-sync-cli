@@ -25,20 +25,24 @@ const explorer = cosmiconfig(moduleName, {
 /**
  * Loads and validates the agent-sync configuration.
  * Uses cosmiconfig to search for config files in standard locations.
- * @param configPath - Optional path to a specific config file. If not provided, searches from current working directory.
+ * @param configPath - Optional path to a specific config file. If not provided, searches from working directory.
+ * @param cwd - Optional working directory to search from. Defaults to process.cwd().
  * @returns A promise that resolves to the validated Config object.
  * @throws Error if the config is invalid or cannot be parsed.
  */
-export async function loadConfig(configPath?: string): Promise<Config> {
+export async function loadConfig(
+  configPath: string | undefined,
+  cwd: string
+): Promise<Config> {
   let configData: Config | undefined;
   try {
     let result: CosmiconfigResult;
     if (configPath) {
       // Load the specific config file
-      result = await explorer.load(path.resolve(configPath));
+      result = await explorer.load(path.resolve(cwd, configPath));
     } else {
       // Search for config files starting from cwd
-      result = await explorer.search(process.cwd());
+      result = await explorer.search(cwd);
     }
     if (result) {
       logger.info(`Found config file at ${result.filepath}`);

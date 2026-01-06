@@ -3,8 +3,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
-import { syncCommand } from '@/commands/sync';
-import { Logger } from '@/core/logger';
+import { router } from '@/router';
 import { Config } from '@/types/config';
 import {
   cleanupTmpDir,
@@ -14,19 +13,12 @@ import {
 
 describe('sync command integration tests', () => {
   let tmpDir: string;
-  let originalCwd: string;
 
   beforeEach(async () => {
     tmpDir = await createTmpDir();
-    originalCwd = process.cwd();
-    process.chdir(tmpDir);
-
-    // Reset logger configuration
-    Logger.configure({ dryRun: false, verbose: false });
   });
 
   afterEach(async () => {
-    process.chdir(originalCwd);
     await cleanupTmpDir(tmpDir);
   });
 
@@ -53,8 +45,10 @@ describe('sync command integration tests', () => {
       });
 
       // Run sync command
-      await syncCommand({
+      const caller = router.createCaller({});
+      await caller.sync({
         config: path.join(tmpDir, '.agentsyncrc.json'),
+        cwd: tmpDir,
       });
 
       // Verify symlink was created
@@ -89,8 +83,10 @@ describe('sync command integration tests', () => {
         '.agents/AGENTS.md': 'agent instructions',
       });
 
-      await syncCommand({
+      const caller = router.createCaller({});
+      await caller.sync({
         config: path.join(tmpDir, '.agentsyncrc.json'),
+        cwd: tmpDir,
       });
 
       // Verify symlink was created
@@ -122,8 +118,10 @@ describe('sync command integration tests', () => {
         '.agents/AGENTS.md': 'agent instructions',
       });
 
-      await syncCommand({
+      const caller = router.createCaller({});
+      await caller.sync({
         config: path.join(tmpDir, '.agentsyncrc.json'),
+        cwd: tmpDir,
       });
 
       // Verify both symlinks were created
@@ -178,8 +176,10 @@ describe('sync command integration tests', () => {
         '.agents/skills/skill1.md': 'skill 1',
       });
 
-      await syncCommand({
+      const caller = router.createCaller({});
+      await caller.sync({
         config: path.join(tmpDir, '.agentsyncrc.json'),
+        cwd: tmpDir,
       });
 
       // Verify all three symlinks were created
@@ -215,8 +215,10 @@ describe('sync command integration tests', () => {
         'project3/nested/AGENTS.md': 'project 3 nested agents',
       });
 
-      await syncCommand({
+      const caller = router.createCaller({});
+      await caller.sync({
         config: path.join(tmpDir, '.agentsyncrc.json'),
+        cwd: tmpDir,
       });
 
       // Verify symlinks were created in all directories with AGENTS.md
@@ -258,8 +260,10 @@ describe('sync command integration tests', () => {
         'project2/AGENTS.md': 'project 2 agents',
       });
 
-      await syncCommand({
+      const caller = router.createCaller({});
+      await caller.sync({
         config: path.join(tmpDir, '.agentsyncrc.json'),
+        cwd: tmpDir,
       });
 
       // Verify symlinks were created for both targets in both directories
@@ -297,8 +301,10 @@ describe('sync command integration tests', () => {
         'packages/pkg3/nested/AGENTS.md': 'pkg3 nested agents',
       });
 
-      await syncCommand({
+      const caller = router.createCaller({});
+      await caller.sync({
         config: path.join(tmpDir, '.agentsyncrc.json'),
+        cwd: tmpDir,
       });
 
       // Verify symlinks in all locations
@@ -346,8 +352,10 @@ describe('sync command integration tests', () => {
         '.agents/rules/rule1.md': 'rule 1',
       });
 
-      await syncCommand({
+      const caller = router.createCaller({});
+      await caller.sync({
         config: path.join(tmpDir, '.agentsyncrc.json'),
+        cwd: tmpDir,
       });
 
       // Verify enabled rule was processed
@@ -388,9 +396,11 @@ describe('sync command integration tests', () => {
       });
 
       // Sync only rule-1
-      await syncCommand({
+      const caller = router.createCaller({});
+      await caller.sync({
         config: path.join(tmpDir, '.agentsyncrc.json'),
         rule: 'rule-1',
+        cwd: tmpDir,
       });
 
       // Verify only rule-1 was processed
@@ -422,9 +432,11 @@ describe('sync command integration tests', () => {
       });
 
       // Sync the disabled rule explicitly
-      await syncCommand({
+      const caller = router.createCaller({});
+      await caller.sync({
         config: path.join(tmpDir, '.agentsyncrc.json'),
         rule: 'disabled-rule',
+        cwd: tmpDir,
       });
 
       // Verify rule was processed despite being disabled
@@ -462,8 +474,10 @@ describe('sync command integration tests', () => {
       });
 
       // Should not throw, just skip the missing source
-      await syncCommand({
+      const caller = router.createCaller({});
+      await caller.sync({
         config: path.join(tmpDir, '.agentsyncrc.json'),
+        cwd: tmpDir,
       });
 
       // Verify missing source was NOT created
@@ -484,10 +498,13 @@ describe('sync command integration tests', () => {
         '.agentsyncrc.json': JSON.stringify(config),
       });
 
+      const caller = router.createCaller({});
+
       // Should not throw
       await expect(
-        syncCommand({
+        caller.sync({
           config: path.join(tmpDir, '.agentsyncrc.json'),
+          cwd: tmpDir,
         })
       ).resolves.not.toThrow();
     });
@@ -520,8 +537,10 @@ describe('sync command integration tests', () => {
       );
 
       // Run sync - should update the symlink
-      await syncCommand({
+      const caller = router.createCaller({});
+      await caller.sync({
         config: path.join(tmpDir, '.agentsyncrc.json'),
+        cwd: tmpDir,
       });
 
       // Verify symlink was updated
@@ -556,9 +575,11 @@ describe('sync command integration tests', () => {
       });
 
       // Run in dry-run mode
-      await syncCommand({
+      const caller = router.createCaller({});
+      await caller.sync({
         config: path.join(tmpDir, '.agentsyncrc.json'),
         dryRun: true,
+        cwd: tmpDir,
       });
 
       // Verify symlink was NOT created
@@ -598,9 +619,11 @@ describe('sync command integration tests', () => {
       );
 
       // Run in dry-run mode
-      await syncCommand({
+      const caller = router.createCaller({});
+      await caller.sync({
         config: path.join(tmpDir, '.agentsyncrc.json'),
         dryRun: true,
+        cwd: tmpDir,
       });
 
       // Verify symlink was NOT updated
@@ -648,8 +671,10 @@ describe('sync command integration tests', () => {
         'packages/shared/nested/AGENTS.md': 'nested agents',
       });
 
-      await syncCommand({
+      const caller = router.createCaller({});
+      await caller.sync({
         config: path.join(tmpDir, '.agentsyncrc.json'),
+        cwd: tmpDir,
       });
 
       // Verify root rules directory symlink
@@ -721,8 +746,10 @@ describe('sync command integration tests', () => {
         'project2/README.md': 'project 2 readme',
       });
 
-      await syncCommand({
+      const caller = router.createCaller({});
+      await caller.sync({
         config: path.join(tmpDir, '.agentsyncrc.json'),
+        cwd: tmpDir,
       });
 
       // Verify non-recursive symlinks

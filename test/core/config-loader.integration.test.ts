@@ -41,7 +41,10 @@ describe('config-loader integration tests', () => {
         '.agentsyncrc.json': JSON.stringify(validConfig),
       });
 
-      const config = await loadConfig(path.join(tmpDir, '.agentsyncrc.json'));
+      const config = await loadConfig(
+        path.join(tmpDir, '.agentsyncrc.json'),
+        tmpDir
+      );
 
       expect(config.rules).toHaveLength(1);
       expect(config.rules[0].name).toBe('test-rule');
@@ -52,7 +55,10 @@ describe('config-loader integration tests', () => {
         '.agentsyncrc': JSON.stringify(validConfig),
       });
 
-      const config = await loadConfig(path.join(tmpDir, '.agentsyncrc'));
+      const config = await loadConfig(
+        path.join(tmpDir, '.agentsyncrc'),
+        tmpDir
+      );
 
       expect(config.rules).toHaveLength(1);
       expect(config.rules[0].name).toBe('test-rule');
@@ -69,7 +75,10 @@ describe('config-loader integration tests', () => {
         'package.json': JSON.stringify(packageJson, null, 2),
       });
 
-      const config = await loadConfig(path.join(tmpDir, 'package.json'));
+      const config = await loadConfig(
+        path.join(tmpDir, 'package.json'),
+        tmpDir
+      );
 
       expect(config.rules).toHaveLength(1);
       expect(config.rules[0].name).toBe('test-rule');
@@ -81,7 +90,8 @@ describe('config-loader integration tests', () => {
       });
 
       const config = await loadConfig(
-        path.join(tmpDir, '.config/.agentsyncrc.json')
+        path.join(tmpDir, '.config/.agentsyncrc.json'),
+        tmpDir
       );
 
       expect(config.rules).toHaveLength(1);
@@ -96,7 +106,8 @@ describe('config-loader integration tests', () => {
       });
 
       const config = await loadConfig(
-        path.join(tmpDir, 'agent-sync.config.js')
+        path.join(tmpDir, 'agent-sync.config.js'),
+        tmpDir
       );
 
       expect(config.rules).toHaveLength(1);
@@ -115,20 +126,15 @@ describe('config-loader integration tests', () => {
       const subDir = path.join(tmpDir, 'nested', 'project');
       await fs.mkdir(subDir, { recursive: true });
 
-      // Change to subdirectory and search for config
-      const originalCwd = process.cwd();
-      try {
-        process.chdir(subDir);
+      // Search should find config in parent
+      // Note: We need to use the actual file path since we're testing discovery
+      const config = await loadConfig(
+        path.join(tmpDir, '.agentsyncrc.json'),
+        subDir
+      );
 
-        // Search should find config in parent
-        // Note: We need to use the actual file path since we're testing discovery
-        const config = await loadConfig(path.join(tmpDir, '.agentsyncrc.json'));
-
-        expect(config.rules).toHaveLength(1);
-        expect(config.rules[0].name).toBe('test-rule');
-      } finally {
-        process.chdir(originalCwd);
-      }
+      expect(config.rules).toHaveLength(1);
+      expect(config.rules[0].name).toBe('test-rule');
     });
 
     it('uses closest config when multiple exist', async () => {
@@ -172,17 +178,56 @@ describe('config-loader integration tests', () => {
       );
 
       // Load from child should get child config
-      const config = await loadConfig(path.join(childDir, '.agentsyncrc.json'));
+      const config = await loadConfig(
+        path.join(childDir, '.agentsyncrc.json'),
+        childDir
+      );
 
       expect(config.rules).toHaveLength(1);
       expect(config.rules[0].name).toBe('child-rule');
     });
   });
 
+  describe('config loading via relative config file path', () => {
+    it('uses cwd as base to resolve nested config relative path', async () => {
+      // Create nested subdirectory
+      const subDir = path.join(tmpDir, 'nested', 'project');
+      await fs.mkdir(subDir, { recursive: true });
+
+      const testConfig: Config = {
+        rules: [
+          {
+            name: 'test-rule',
+            source: '.agents/rules',
+            target: '.claude/rules',
+            recursive: true,
+            type: 'file',
+            enabled: true,
+          },
+        ],
+      };
+      await fs.writeFile(
+        path.join(subDir, '.agentsyncrc.json'),
+        JSON.stringify(testConfig)
+      );
+
+      const config = await loadConfig(
+        path.join('nested', 'project', '.agentsyncrc.json'),
+        tmpDir
+      );
+
+      expect(config.rules).toHaveLength(1);
+      expect(config.rules[0].name).toBe('test-rule');
+    });
+  });
+
   describe('config validation', () => {
     it('returns empty config when no config file exists', async () => {
       // No config file created
-      const config = await loadConfig(path.join(tmpDir, 'nonexistent.json'));
+      const config = await loadConfig(
+        path.join(tmpDir, 'nonexistent.json'),
+        tmpDir
+      );
 
       expect(config.rules).toEqual([]);
     });
@@ -197,7 +242,7 @@ describe('config-loader integration tests', () => {
       });
 
       await expect(
-        loadConfig(path.join(tmpDir, '.agentsyncrc.json'))
+        loadConfig(path.join(tmpDir, '.agentsyncrc.json'), tmpDir)
       ).rejects.toThrow('Invalid config');
     });
 
@@ -216,7 +261,7 @@ describe('config-loader integration tests', () => {
       });
 
       await expect(
-        loadConfig(path.join(tmpDir, '.agentsyncrc.json'))
+        loadConfig(path.join(tmpDir, '.agentsyncrc.json'), tmpDir)
       ).rejects.toThrow('Invalid config');
     });
 
@@ -239,7 +284,7 @@ describe('config-loader integration tests', () => {
       });
 
       await expect(
-        loadConfig(path.join(tmpDir, '.agentsyncrc.json'))
+        loadConfig(path.join(tmpDir, '.agentsyncrc.json'), tmpDir)
       ).rejects.toThrow('Invalid config');
     });
 
@@ -261,7 +306,10 @@ describe('config-loader integration tests', () => {
         '.agentsyncrc.json': JSON.stringify(configWithArrayTarget),
       });
 
-      const config = await loadConfig(path.join(tmpDir, '.agentsyncrc.json'));
+      const config = await loadConfig(
+        path.join(tmpDir, '.agentsyncrc.json'),
+        tmpDir
+      );
 
       expect(config.rules).toHaveLength(1);
       expect(config.rules[0].target).toEqual([
@@ -287,7 +335,10 @@ describe('config-loader integration tests', () => {
         '.agentsyncrc.yaml': yamlConfig,
       });
 
-      const config = await loadConfig(path.join(tmpDir, '.agentsyncrc.yaml'));
+      const config = await loadConfig(
+        path.join(tmpDir, '.agentsyncrc.yaml'),
+        tmpDir
+      );
 
       expect(config.rules).toHaveLength(1);
       expect(config.rules[0].name).toBe('test-rule');
@@ -307,7 +358,10 @@ describe('config-loader integration tests', () => {
         '.agentsyncrc.yml': ymlConfig,
       });
 
-      const config = await loadConfig(path.join(tmpDir, '.agentsyncrc.yml'));
+      const config = await loadConfig(
+        path.join(tmpDir, '.agentsyncrc.yml'),
+        tmpDir
+      );
 
       expect(config.rules).toHaveLength(1);
       expect(config.rules[0].name).toBe('yml-rule');
@@ -349,7 +403,10 @@ describe('config-loader integration tests', () => {
         '.agentsyncrc.json': JSON.stringify(multiRuleConfig, null, 2),
       });
 
-      const config = await loadConfig(path.join(tmpDir, '.agentsyncrc.json'));
+      const config = await loadConfig(
+        path.join(tmpDir, '.agentsyncrc.json'),
+        tmpDir
+      );
 
       expect(config.rules).toHaveLength(3);
       expect(config.rules[0].name).toBe('rule-1');
@@ -388,7 +445,10 @@ describe('config-loader integration tests', () => {
         '.agentsyncrc.json': JSON.stringify(minimalConfig),
       });
 
-      const config = await loadConfig(path.join(tmpDir, '.agentsyncrc.json'));
+      const config = await loadConfig(
+        path.join(tmpDir, '.agentsyncrc.json'),
+        tmpDir
+      );
 
       expect(config.rules).toHaveLength(1);
       expect(config.rules[0].name).toBe('minimal-rule');
@@ -404,7 +464,10 @@ describe('config-loader integration tests', () => {
         '.agentsyncrc.json': JSON.stringify(emptyConfig),
       });
 
-      const config = await loadConfig(path.join(tmpDir, '.agentsyncrc.json'));
+      const config = await loadConfig(
+        path.join(tmpDir, '.agentsyncrc.json'),
+        tmpDir
+      );
 
       expect(config.rules).toEqual([]);
     });

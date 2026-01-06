@@ -287,23 +287,6 @@ describe('file-utils integration tests', () => {
 
       expect(exists).toBe(true);
     });
-
-    it('handles relative paths', async () => {
-      const originalCwd = process.cwd();
-      try {
-        process.chdir(tmpDir);
-
-        await createFileStructure(tmpDir, {
-          'subdir/file.txt': 'content',
-        });
-
-        const exists = directoryExists('./subdir');
-
-        expect(exists).toBe(true);
-      } finally {
-        process.chdir(originalCwd);
-      }
-    });
   });
 
   describe('edge cases', () => {

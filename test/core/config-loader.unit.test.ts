@@ -1,6 +1,7 @@
 import { cosmiconfig } from 'cosmiconfig';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { getTmpBaseDir } from '../test-utils/filesystem.js';
 import { createMockCosmiconfig } from '../test-utils/mocks.js';
 
 // Mock cosmiconfig at module scope
@@ -15,6 +16,8 @@ vi.mock('@/core/logger', () => ({
     warn: vi.fn(),
   },
 }));
+
+const baseDir = getTmpBaseDir();
 
 describe('config-loader unit tests', () => {
   beforeEach(async () => {
@@ -41,7 +44,7 @@ describe('config-loader unit tests', () => {
       vi.mocked(cosmiconfig).mockReturnValue(mockExplorer);
 
       const { loadConfig } = await import('@/core/config-loader.js');
-      const result = await loadConfig();
+      const result = await loadConfig(undefined, baseDir);
 
       expect(result).toEqual(validConfig);
       expect(result.rules).toHaveLength(1);
@@ -74,7 +77,7 @@ describe('config-loader unit tests', () => {
       vi.mocked(cosmiconfig).mockReturnValue(mockExplorer);
 
       const { loadConfig } = await import('@/core/config-loader.js');
-      const result = await loadConfig();
+      const result = await loadConfig(undefined, baseDir);
 
       expect(result.rules).toHaveLength(2);
       expect(result.rules[0].name).toBe('rule-1');
@@ -99,7 +102,7 @@ describe('config-loader unit tests', () => {
       vi.mocked(cosmiconfig).mockReturnValue(mockExplorer);
 
       const { loadConfig } = await import('@/core/config-loader.js');
-      const result = await loadConfig();
+      const result = await loadConfig(undefined, baseDir);
 
       expect(result.rules[0].target).toEqual(['.claude/rules', '.cursorrules']);
     });
@@ -123,7 +126,7 @@ describe('config-loader unit tests', () => {
       vi.mocked(cosmiconfig).mockReturnValue(mockExplorer);
 
       const { loadConfig } = await import('@/core/config-loader.js');
-      const result = await loadConfig();
+      const result = await loadConfig(undefined, baseDir);
 
       expect(result.rules[0].description).toBe('This is a test rule');
     });
@@ -154,7 +157,7 @@ describe('config-loader unit tests', () => {
       vi.mocked(cosmiconfig).mockReturnValue(mockExplorer);
 
       const { loadConfig } = await import('@/core/config-loader.js');
-      const result = await loadConfig();
+      const result = await loadConfig(undefined, baseDir);
 
       expect(result.rules[0].type).toBe('file');
       expect(result.rules[1].type).toBe('directory');
@@ -167,7 +170,7 @@ describe('config-loader unit tests', () => {
       vi.mocked(cosmiconfig).mockReturnValue(mockExplorer);
 
       const { loadConfig } = await import('@/core/config-loader.js');
-      const result = await loadConfig();
+      const result = await loadConfig(undefined, baseDir);
 
       expect(result.rules).toEqual([]);
     });
@@ -179,7 +182,7 @@ describe('config-loader unit tests', () => {
       vi.mocked(cosmiconfig).mockReturnValue(mockExplorer);
 
       const { loadConfig } = await import('@/core/config-loader.js');
-      const result = await loadConfig();
+      const result = await loadConfig(undefined, baseDir);
 
       expect(result.rules).toEqual([]);
     });
@@ -195,7 +198,7 @@ describe('config-loader unit tests', () => {
       vi.mocked(cosmiconfig).mockReturnValue(mockExplorer);
 
       const { loadConfig } = await import('@/core/config-loader.js');
-      const result = await loadConfig();
+      const result = await loadConfig(undefined, baseDir);
 
       expect(result.rules).toEqual([]);
     });
@@ -221,7 +224,9 @@ describe('config-loader unit tests', () => {
 
       const { loadConfig } = await import('@/core/config-loader.js');
 
-      await expect(loadConfig()).rejects.toThrow('Invalid config');
+      await expect(loadConfig(undefined, baseDir)).rejects.toThrow(
+        'Invalid config'
+      );
     });
 
     it('should reject config with missing required field: source', async () => {
@@ -243,7 +248,9 @@ describe('config-loader unit tests', () => {
 
       const { loadConfig } = await import('@/core/config-loader.js');
 
-      await expect(loadConfig()).rejects.toThrow('Invalid config');
+      await expect(loadConfig(undefined, baseDir)).rejects.toThrow(
+        'Invalid config'
+      );
     });
 
     it('should reject config with missing required field: target', async () => {
@@ -265,7 +272,9 @@ describe('config-loader unit tests', () => {
 
       const { loadConfig } = await import('@/core/config-loader.js');
 
-      await expect(loadConfig()).rejects.toThrow('Invalid config');
+      await expect(loadConfig(undefined, baseDir)).rejects.toThrow(
+        'Invalid config'
+      );
     });
 
     it('should reject config with missing required field: recursive', async () => {
@@ -287,7 +296,9 @@ describe('config-loader unit tests', () => {
 
       const { loadConfig } = await import('@/core/config-loader.js');
 
-      await expect(loadConfig()).rejects.toThrow('Invalid config');
+      await expect(loadConfig(undefined, baseDir)).rejects.toThrow(
+        'Invalid config'
+      );
     });
 
     it('should reject config with missing required field: type', async () => {
@@ -309,7 +320,9 @@ describe('config-loader unit tests', () => {
 
       const { loadConfig } = await import('@/core/config-loader.js');
 
-      await expect(loadConfig()).rejects.toThrow('Invalid config');
+      await expect(loadConfig(undefined, baseDir)).rejects.toThrow(
+        'Invalid config'
+      );
     });
 
     it('should reject config with missing required field: enabled', async () => {
@@ -331,7 +344,9 @@ describe('config-loader unit tests', () => {
 
       const { loadConfig } = await import('@/core/config-loader.js');
 
-      await expect(loadConfig()).rejects.toThrow('Invalid config');
+      await expect(loadConfig(undefined, baseDir)).rejects.toThrow(
+        'Invalid config'
+      );
     });
 
     it('should reject config with invalid type for name (number instead of string)', async () => {
@@ -353,7 +368,9 @@ describe('config-loader unit tests', () => {
 
       const { loadConfig } = await import('@/core/config-loader.js');
 
-      await expect(loadConfig()).rejects.toThrow('Invalid config');
+      await expect(loadConfig(undefined, baseDir)).rejects.toThrow(
+        'Invalid config'
+      );
     });
 
     it('should reject config with invalid type for recursive (string instead of boolean)', async () => {
@@ -375,7 +392,9 @@ describe('config-loader unit tests', () => {
 
       const { loadConfig } = await import('@/core/config-loader.js');
 
-      await expect(loadConfig()).rejects.toThrow('Invalid config');
+      await expect(loadConfig(undefined, baseDir)).rejects.toThrow(
+        'Invalid config'
+      );
     });
 
     it('should reject config with invalid enum value for type', async () => {
@@ -397,7 +416,9 @@ describe('config-loader unit tests', () => {
 
       const { loadConfig } = await import('@/core/config-loader.js');
 
-      await expect(loadConfig()).rejects.toThrow('Invalid config');
+      await expect(loadConfig(undefined, baseDir)).rejects.toThrow(
+        'Invalid config'
+      );
     });
 
     it('should reject config with empty string for target', async () => {
@@ -419,7 +440,9 @@ describe('config-loader unit tests', () => {
 
       const { loadConfig } = await import('@/core/config-loader.js');
 
-      await expect(loadConfig()).rejects.toThrow('Invalid config');
+      await expect(loadConfig(undefined, baseDir)).rejects.toThrow(
+        'Invalid config'
+      );
     });
 
     it('should reject config with empty array for target', async () => {
@@ -441,7 +464,9 @@ describe('config-loader unit tests', () => {
 
       const { loadConfig } = await import('@/core/config-loader.js');
 
-      await expect(loadConfig()).rejects.toThrow('Invalid config');
+      await expect(loadConfig(undefined, baseDir)).rejects.toThrow(
+        'Invalid config'
+      );
     });
 
     it('should reject config with rules as non-array', async () => {
@@ -454,7 +479,9 @@ describe('config-loader unit tests', () => {
 
       const { loadConfig } = await import('@/core/config-loader.js');
 
-      await expect(loadConfig()).rejects.toThrow('Invalid config');
+      await expect(loadConfig(undefined, baseDir)).rejects.toThrow(
+        'Invalid config'
+      );
     });
 
     it('should reject config with missing rules field', async () => {
@@ -465,7 +492,9 @@ describe('config-loader unit tests', () => {
 
       const { loadConfig } = await import('@/core/config-loader.js');
 
-      await expect(loadConfig()).rejects.toThrow('Invalid config');
+      await expect(loadConfig(undefined, baseDir)).rejects.toThrow(
+        'Invalid config'
+      );
     });
   });
 
@@ -486,9 +515,9 @@ describe('config-loader unit tests', () => {
       vi.mocked(cosmiconfig).mockReturnValue(mockExplorer);
 
       const { loadConfig } = await import('@/core/config-loader.js');
-      await loadConfig();
+      await loadConfig(undefined, baseDir);
 
-      expect(mockSearch).toHaveBeenCalledWith(process.cwd());
+      expect(mockSearch).toHaveBeenCalledWith(baseDir);
       expect(mockExplorer.load).not.toHaveBeenCalled();
     });
 
@@ -508,7 +537,7 @@ describe('config-loader unit tests', () => {
       vi.mocked(cosmiconfig).mockReturnValue(mockExplorer);
 
       const { loadConfig } = await import('@/core/config-loader.js');
-      await loadConfig('/custom/path/config.json');
+      await loadConfig('/custom/path/config.json', baseDir);
 
       expect(mockLoad).toHaveBeenCalled();
       expect(mockExplorer.search).not.toHaveBeenCalled();

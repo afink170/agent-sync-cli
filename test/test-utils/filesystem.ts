@@ -2,6 +2,10 @@ import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 
+export function getTmpBaseDir(): string {
+  return path.join(os.tmpdir(), 'agent-sync-test-');
+}
+
 /**
  * Create a unique temporary directory for testing.
  *
@@ -13,8 +17,7 @@ import path from 'node:path';
  * ```
  */
 export async function createTmpDir(): Promise<string> {
-  const tmpBase = path.join(os.tmpdir(), 'agent-sync-test-');
-  return await fs.mkdtemp(tmpBase);
+  return await fs.mkdtemp(getTmpBaseDir());
 }
 
 /**
