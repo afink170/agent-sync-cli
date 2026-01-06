@@ -23,9 +23,3 @@ runs:
     - name: Install dependencies
       shell: bash
       run: pnpm install --frozen-lockfile
-
-    - name: cache-node_modules
-      uses: actions/cache@v4
-      with:
-        path: node_modules
-        key: node-modules-ubuntu-latest-${{ hashFiles('pnpm-lock.json') }}
