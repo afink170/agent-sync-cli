@@ -38,7 +38,7 @@
     "test:coverage": "vitest --coverage",
     "test:unit": "vitest --project unit",
     "test:integration": "vitest --project integration",
-    "test:watch": "vitest",
+    "test:watch": "vitest --watch",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
     "format": "prettier --write .",
