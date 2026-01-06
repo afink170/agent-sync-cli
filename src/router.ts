@@ -2,37 +2,46 @@ import { initTRPC } from '@trpc/server';
 import { z } from 'zod';
 import { syncCommand } from './commands/sync';
 import { validateCommand } from './commands/validate';
+import { loadConfig } from './core/config-loader';
+import { Logger } from './core/logger';
+import { BaseCommandInput, CLIContext } from './types/trpc-cli';
 
-const t = initTRPC.create();
+const t = initTRPC.context<Partial<CLIContext>>().create();
+
+const configuredProcedure = t.procedure
+  .input(BaseCommandInput)
+  .use(async (opts) => {
+    const {
+      config: configFile,
+      dryRun,
+      verbose,
+      cwd = process.cwd(),
+    } = opts.input;
+    Logger.configure({ dryRun, verbose });
+    const config = await loadConfig(configFile, cwd);
+    return opts.next({
+      ctx: { config },
+      input: { cwd, dryRun, verbose },
+    });
+  });
 
 const router = t.router({
-  sync: t.procedure
+  sync: configuredProcedure
     .meta({
       description: 'Sync all enabled rules',
     })
     .input(
-      z.object({
+      BaseCommandInput.extend({
         rule: z.string().optional().describe('Sync specific rule'),
-        config: z.string().optional().describe('Path to config file'),
-        dryRun: z.boolean().optional().describe('Dry run mode'),
-        verbose: z.boolean().optional().describe('Verbose output'),
       })
     )
-    .mutation(async ({ input }) => {
-      await syncCommand(input);
-    }),
-  validate: t.procedure
+    .mutation(syncCommand),
+
+  validate: configuredProcedure
     .meta({
       description: 'Validate config',
     })
-    .input(
-      z.object({
-        config: z.string().optional().describe('Path to config file'),
-      })
-    )
-    .mutation(async ({ input }) => {
-      await validateCommand(input);
-    }),
+    .mutation(validateCommand),
 });
 
 export { router };
