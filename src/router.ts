@@ -11,12 +11,17 @@ const t = initTRPC.context<Partial<CLIContext>>().create();
 const configuredProcedure = t.procedure
   .input(BaseCommandInput)
   .use(async (opts) => {
-    const { config: configFile, dryRun, verbose, cwd } = opts.input;
+    const {
+      config: configFile,
+      dryRun,
+      verbose,
+      cwd = process.cwd(),
+    } = opts.input;
     Logger.configure({ dryRun, verbose });
     const config = await loadConfig(configFile, cwd);
     return opts.next({
       ctx: { config },
-      input: { cwd },
+      input: { cwd, dryRun, verbose },
     });
   });
 
